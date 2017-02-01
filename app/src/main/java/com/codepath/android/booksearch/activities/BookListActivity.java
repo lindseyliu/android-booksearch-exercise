@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.codepath.android.booksearch.R;
 import com.codepath.android.booksearch.adapters.BookAdapter;
@@ -32,6 +33,7 @@ public class BookListActivity extends AppCompatActivity implements AdapterView.O
     private BookAdapter bookAdapter;
     private BookClient client;
     private ArrayList<Book> aBooks;
+    MenuItem miActionProgressItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public class BookListActivity extends AppCompatActivity implements AdapterView.O
                             bookAdapter.add(book); // add book through the adapter
                         }
                         bookAdapter.notifyDataSetChanged();
+                        hideProgressBar();
                     }
                 } catch (JSONException e) {
                     // Invalid JSON format, show appropriate error.
@@ -105,6 +108,7 @@ public class BookListActivity extends AppCompatActivity implements AdapterView.O
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                showProgressBar();
                 // perform query here
                 fetchBooks(query);
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
@@ -122,6 +126,26 @@ public class BookListActivity extends AppCompatActivity implements AdapterView.O
 
 
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Store instance of the menu item containing progress
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+        // Extract the action-view from the menu item
+        ProgressBar v =  (ProgressBar) MenuItemCompat.getActionView(miActionProgressItem);
+        // Return to finish
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    public void showProgressBar() {
+        // Show progress item
+        miActionProgressItem.setVisible(true);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        miActionProgressItem.setVisible(false);
     }
 
     @Override
