@@ -85,6 +85,7 @@ public class BookListActivity extends AppCompatActivity implements AdapterView.O
                         }
                         bookAdapter.notifyDataSetChanged();
                         hideProgressBar();
+                        lvBooks.setSelectionAfterHeaderView();
                     }
                 } catch (JSONException e) {
                     // Invalid JSON format, show appropriate error.

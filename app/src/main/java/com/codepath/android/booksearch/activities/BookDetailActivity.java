@@ -29,6 +29,8 @@ public class BookDetailActivity extends AppCompatActivity {
     private ImageView ivBookCover;
     private TextView tvTitle;
     private TextView tvAuthor;
+    private TextView tvPublisher;
+    private TextView tvPublishYear;
 
     private Book book;
 
@@ -50,12 +52,20 @@ public class BookDetailActivity extends AppCompatActivity {
         ivBookCover = (ImageView) findViewById(R.id.ivBookCover);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvAuthor = (TextView) findViewById(R.id.tvAuthor);
+        tvPublisher = (TextView) findViewById(R.id.tvPublisher);
+        tvPublishYear = (TextView) findViewById(R.id.tvPublishYear);
 
         // Extract book object from intent extras
         book = (Book) getIntent().getParcelableExtra("book");
         // Use book object to populate data into views
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor());
+        if (! book.getPublisher().isEmpty()) {
+            tvPublisher.setText("Publishers: " + book.getPublisher());
+        }
+        if (! book.getPublishYear().isEmpty()) {
+            tvPublishYear.setText("Publish years: " + book.getPublishYear());
+        }
         Picasso.with(this).load(Uri.parse(book.getCoverUrl())).placeholder(R.drawable.ic_nocover).into(
                 ivBookCover, new Callback() {
                     @Override public void onSuccess() {

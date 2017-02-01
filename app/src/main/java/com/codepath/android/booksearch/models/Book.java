@@ -14,6 +14,24 @@ public class Book implements Parcelable {
     private String openLibraryId;
     private String author;
     private String title;
+    private String publisher;
+    private String publishYear;
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getPublishYear() {
+        return publishYear;
+    }
+
+    public void setPublishYear(String publishYear) {
+        this.publishYear = publishYear;
+    }
 
     public String getOpenLibraryId() {
         return openLibraryId;
@@ -46,6 +64,8 @@ public class Book implements Parcelable {
             }
             book.title = jsonObject.has("title_suggest") ? jsonObject.getString("title_suggest") : "";
             book.author = getAuthor(jsonObject);
+            book.publisher = getPublisher(jsonObject);
+            book.publishYear = getPublishYear(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -64,6 +84,36 @@ public class Book implements Parcelable {
                 authorStrings[i] = authors.getString(i);
             }
             return TextUtils.join(", ", authorStrings);
+        } catch (JSONException e) {
+            return "";
+        }
+    }
+
+    // Return comma separated author list when there is more than one author
+    private static String getPublisher(final JSONObject jsonObject) {
+        try {
+            final JSONArray publishers = jsonObject.getJSONArray("publisher");
+            int numPublishers = publishers.length();
+            final String[] publisherStrings = new String[numPublishers];
+            for (int i = 0; i < numPublishers; ++i) {
+                publisherStrings[i] = publishers.getString(i);
+            }
+            return TextUtils.join(", ", publisherStrings);
+        } catch (JSONException e) {
+            return "";
+        }
+    }
+
+    // Return comma separated author list when there is more than one author
+    private static String getPublishYear(final JSONObject jsonObject) {
+        try {
+            final JSONArray publishYears = jsonObject.getJSONArray("publish_year");
+            int numPublishYears = publishYears.length();
+            final String[] publishYearStrings = new String[numPublishYears];
+            for (int i = 0; i < numPublishYears; ++i) {
+                publishYearStrings[i] = publishYears.getString(i);
+            }
+            return TextUtils.join(", ", publishYearStrings);
         } catch (JSONException e) {
             return "";
         }
@@ -90,6 +140,9 @@ public class Book implements Parcelable {
         return books;
     }
 
+    public Book() {
+    }
+
     @Override public int describeContents() {
         return 0;
     }
@@ -98,18 +151,19 @@ public class Book implements Parcelable {
         dest.writeString(this.openLibraryId);
         dest.writeString(this.author);
         dest.writeString(this.title);
-    }
-
-    public Book() {
+        dest.writeString(this.publisher);
+        dest.writeString(this.publishYear);
     }
 
     protected Book(Parcel in) {
         this.openLibraryId = in.readString();
         this.author = in.readString();
         this.title = in.readString();
+        this.publisher = in.readString();
+        this.publishYear = in.readString();
     }
 
-    public static final Parcelable.Creator<Book> CREATOR = new Parcelable.Creator<Book>() {
+    public static final Creator<Book> CREATOR = new Creator<Book>() {
         @Override public Book createFromParcel(Parcel source) {
             return new Book(source);
         }
